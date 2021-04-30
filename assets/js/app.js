@@ -3,6 +3,8 @@
 // its own CSS file.
 import "../css/app.scss"
 
+import LiveReact, { initLiveReact } from "phoenix_live_react"
+
 // webpack automatically bundles all modules in your
 // entry points. Those entry points can be configured
 // in "webpack.config.js".
@@ -16,9 +18,16 @@ import "phoenix_html"
 import {Socket} from "phoenix"
 import topbar from "topbar"
 import {LiveSocket} from "phoenix_live_view"
+import {Editor} from './components/Editor'
+
+let hooks = { LiveReact }
+
+window.Components =  {
+  Editor
+}
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}})
+let liveSocket = new LiveSocket("/live", Socket, {hooks, params: {_csrf_token: csrfToken}})
 
 // Show progress bar on live navigation and form submits
 topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
@@ -34,3 +43,6 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
+document.addEventListener("DOMContentLoaded", e => {
+  initLiveReact()
+})
