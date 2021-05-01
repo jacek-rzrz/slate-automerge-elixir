@@ -5,4 +5,8 @@ defmodule MyAppWeb.PageLive do
   def mount(_params, _session, socket) do
     {:ok, socket}
   end
+
+  def handle_event("changes", _params, socket) do
+    {:noreply, socket}
+  end
 end
