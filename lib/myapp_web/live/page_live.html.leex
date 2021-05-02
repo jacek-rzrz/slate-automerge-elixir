@@ -1,1 +1,3 @@
-<%= live_react_component("Components.Editor", [name: "Editor"], id: "editor-1") %>
+<%= live_react_component("Components.Editor", [name: "Editor", document: @document], id: "editor-1") %>
+
+Servers Document: <%= server_doc(@document)  %>

@@ -1,20 +1,25 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { createEditor } from 'slate'
 import { Slate, Editable, withReact } from 'slate-react'
 import { withHistory } from 'slate-history'
 
 import { withAutomerge } from '../withAutomerge'
 
-export const Editor = ({pushEvent, pushEventTo, handleEvent, ...props}) => {
-  console.log(props)
-  console.log(pushEvent)
+import Automerge from 'automerge'
 
-  const [value, setValue] = useState(initialValue)
+export const Editor = ({pushEvent, pushEventTo, handleEvent, document, actorId, ...props}) => {
+  const [value, setValue] = useState(() => {
+    const doc = Automerge.load(new Uint8Array(document))
+
+    return JSON.parse(JSON.stringify(doc)).children
+  })
+
   const editor = useMemo(() => {
     const slateEditor = withHistory(withReact(createEditor()))
 
     const opts = {
-      userId: "4bc3dc047e2442b9b3129e1447311b79",
+      actorId,
+      document,
       pushEvent,
       handleEvent,
     }
@@ -22,18 +27,23 @@ export const Editor = ({pushEvent, pushEventTo, handleEvent, ...props}) => {
     return withAutomerge(slateEditor, opts)
   }, [])
 
+  // Sync selection data.
+  useEffect(() => {
+    if (!handleEvent) return
+    handleEvent(`changes`, ({changes: changes}) => {
+      const [doc, patch] = Automerge.applyChanges(editor.doc, changes.map(change => new Uint8Array(change)))
+      editor.doc = doc
+    })
+
+    return () => {
+
+    }
+  }, [handleEvent])
+
+
   return (
     <Slate editor={editor} value={value} onChange={value => setValue(value)}>
       <Editable placeholder="Enter some plain text..." />
     </Slate>
   )
 }
-
-const initialValue = [
-  {
-    type: 'paragraph',
-    children: [
-      { text: 'This is editable plain text, just like a <textarea>!' },
-    ],
-  },
-]

@@ -45,6 +45,7 @@ defmodule MyApp.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:phoenix_live_react, "~> 0.4"},
+      {:elixir_uuid, "~> 1.6", hex: :uuid_utils},
       {:automerge, path: "../../automerge"}
     ]
   end

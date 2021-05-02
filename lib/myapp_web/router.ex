@@ -17,7 +17,7 @@ defmodule MyAppWeb.Router do
   scope "/", MyAppWeb do
     pipe_through :browser
 
-    live "/", PageLive, :index
+    live "/d/*doc_slug", PageLive, :index
   end
 
   # Other scopes may use custom stacks.
